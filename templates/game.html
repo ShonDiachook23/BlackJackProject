@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blackjack Game</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f5f6fa; padding: 40px; color: #333; }
+        .container { max-width: 700px; margin: auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; }
+        button { padding: 10px; font-size: 16px; border-radius: 6px; cursor: pointer; background-color: #007bff; color: white; }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Blackjack AI Game</h1>
+        <form method="post">
+            <input type="number" name="bet" min="1" value="{{ bet }}">
+            <button type="submit">New Game</button>
+        </form>
+
+        {% if state %}
+            <p><strong>Player Hand Value:</strong> {{ state[0] }}</p>
+            <p><strong>Dealer Visible Card:</strong> {{ state[1] }}</p>
+            <p><strong>Has Ace:</strong> {{ 'Yes' if state[2] else 'No' }}</p>
+            <p><strong>Bet:</strong> {{ bet }}</p>
+
+            <h3>Player Cards</h3>
+            <ul>{% for card in full_hands['player'] %}<li>{{ card[0] }} of {{ card[1] }}</li>{% endfor %}</ul>
+
+            {% if done %}
+                <h3>Dealer Cards</h3>
+                <ul>{% for card in full_hands['dealer'] %}<li>{{ card[0] }} of {{ card[1] }}</li>{% endfor %}</ul>
+                <p><strong>Game Over. Reward:</strong> {{ reward }}</p>
+                <a href="/reset"><button>Play Again</button></a>
+            {% else %}
+                {% if agent_play %}
+                    <meta http-equiv="refresh" content="2;url=/agent_move">
+                    <p>AI playing next move...</p>
+                {% else %}
+                    <a href="/hit"><button>Hit</button></a>
+                    <a href="/stand"><button>Stand</button></a>
+                    <a href="/agent_move"><button>Let AI Play</button></a>
+                {% endif %}
+            {% endif %}
+
+            <h4>Action Log</h4>
+            <ul>{% for entry in log %}<li>{{ entry.action }} (State: {{ entry.state }}, Reward: {{ entry.reward }})</li>{% endfor %}</ul>
+        {% endif %}
+    </div>
+</body>
+</html>
