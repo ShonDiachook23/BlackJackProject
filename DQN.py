@@ -70,26 +70,35 @@ if __name__ == '__main__':
     env = BlackjackEnv()  # יצירת סביבה
     agent = DQNAgent(state_size=3, action_size=len(Action))  # יצירת סוכן
 
-    episodes = 10000  # מספר אפיזודות אימון
+    episodes = 1000  # מספר אפיזודות אימון
     total_balance = 0
 
     for e in range(episodes):
-        state = env.reset()  # אתחול סביבה
+        state = env.reset()
         done = False
+        episode_reward = 0
 
         while not done:
-            action = agent.act(state)  # הסוכן בוחר פעולה
-            next_state, reward, done = env.step(action)  # מבצעים את הפעולה בסביבה
-            agent.remember(state, action, reward, next_state, done)  # שמירת החוויה
+            action = agent.act(state)
+            next_state, reward, done = env.step(action)
+            agent.remember(state, action, reward, next_state, done)
             state = next_state
-            total_balance += reward  # חישוב תגמול מצטבר
+            episode_reward += reward
+            total_balance += reward
 
-        agent.replay()  # למידה מהמיני־באץ'
+        agent.replay()
 
-        # שמירה ויומן כל 100 אפיזודות
-        if (e + 1) % 100 == 0:
-            print(f"Episode: {e+1}/{episodes}, Epsilon: {agent.epsilon:.2f}, Total Balance: {total_balance}")
-            agent.model.save("blackjack_model.keras")  # שמירת המודל המאומן
+        # הדפסה בכל אפיזודה
+        print(f"[{e+1}/{episodes}] Epsilon: {agent.epsilon:.4f} | Episode Reward: {episode_reward:.2f} | Total Balance: {total_balance:.2f}")
 
-    # שמירה סופית של המודל
-    agent.model.save("blackjack_model.keras")
+        # שמירה כל 500 אפיזודות
+        if (e + 1) % 500 == 0:
+            agent.model.save("blackjack_model.keras")
+            print("🟢 Intermediate model saved (blackjack_model.keras)")
+
+# שמירה סופית
+agent.model.save("blackjack_model.keras")
+print("✅ Final model saved: blackjack_model.keras")
+
+agent.model.save("dqn_blackjack_model.h5")
+print("✅ Final model saved: dqn_blackjack_model.h5")
