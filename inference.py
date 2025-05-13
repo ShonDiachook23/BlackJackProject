@@ -12,8 +12,6 @@ def evaluate_model(model, env, num_episodes=5000):
 
         while not done:
             # המרה של המצב לווקטור קלט עבור המודל
-            # שימי לב: הקוד הזה מניח מצב בגודל 6 (לא תואם לגרסה שלנו)
-            # ייתכן שהוא מתייחס לגרסה ישנה של BlackjackEnv
             state_vector = np.array([state[0], state[1], state[2]])
             state_tensor = tf.convert_to_tensor([state_vector], dtype=tf.float32)
 
